@@ -135,6 +135,8 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
             AppKit.NSApplication.sharedApplication().terminate_(None)
         print "Fetching", url, "..."
         self.resetWebview(webview)
+        ## Load the URL without caching.
+        ## http://stackoverflow.com/questions/12072076/how-do-you-clear-the-webview-cache-in-cocoa
         webview.mainFrame().loadRequest_(Foundation.NSURLRequest.requestWithURL_cachePolicy_timeoutInterval_(
                 Foundation.NSURL.URLWithString_(url),
                 Foundation.NSURLRequestReloadIgnoringLocalCacheData,
