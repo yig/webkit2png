@@ -38,14 +38,14 @@ except ImportError:
   print "Cannot find pyobjc library files.  Are you sure it is installed?"
   sys.exit() 
 
-
+kTimeout = 120
 
 class AppDelegate (Foundation.NSObject):
     # what happens when the app starts up
     def applicationDidFinishLaunching_(self, aNotification):
         webview = aNotification.object().windows()[0].contentView()
         webview.frameLoadDelegate().getURL(webview)
-        self.performSelector_withObject_afterDelay_( "timeout:", None, 60 )
+        self.performSelector_withObject_afterDelay_( "timeout:", None, kTimeout )
 
     def timeout_(self, obj):
         Foundation.NSLog("timed out!")
@@ -135,7 +135,11 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
             AppKit.NSApplication.sharedApplication().terminate_(None)
         print "Fetching", url, "..."
         self.resetWebview(webview)
-        webview.mainFrame().loadRequest_(Foundation.NSURLRequest.requestWithURL_(Foundation.NSURL.URLWithString_(url)))
+        webview.mainFrame().loadRequest_(Foundation.NSURLRequest.requestWithURL_cachePolicy_timeoutInterval_(
+                Foundation.NSURL.URLWithString_(url),
+                Foundation.NSURLRequestReloadIgnoringLocalCacheData,
+                kTimeout
+                ))
         if not webview.mainFrame().provisionalDataSource():
             print " ... not a proper url?"
             self.getURL(webview)
