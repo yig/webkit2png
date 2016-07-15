@@ -140,6 +140,7 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
         webview.mainFrame().loadRequest_(Foundation.NSURLRequest.requestWithURL_cachePolicy_timeoutInterval_(
                 Foundation.NSURL.URLWithString_(url),
                 Foundation.NSURLRequestReloadIgnoringLocalCacheData,
+                #Foundation.NSURLRequestReturnCacheDataElseLoad,
                 kTimeout
                 ))
         if not webview.mainFrame().provisionalDataSource():
@@ -300,7 +301,9 @@ examples:
        options.initWidth = options.width
     if options.height>options.initHeight:
        options.initHeight = options.height
-      
+    # Handles ATS HTTPS requirement introduced in El Cap
+    AppKit.NSBundle.mainBundle().infoDictionary()['NSAppTransportSecurity'] = dict(NSAllowsArbitraryLoads = True)
+    
     app = AppKit.NSApplication.sharedApplication()
     
     # create an app delegate
